@@ -10,6 +10,7 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 interface FormRegister{
     email:string;
     password:string;
+    
 }
 
 interface ShowMessage{
@@ -22,7 +23,8 @@ export const RegisterScreen = () => {
   
   const [formRegister, setFormRegister] = useState<FormRegister>({
     email:"",
-    password:""
+    password:"",
+    
   });
 
   const [showMessage, setShowMessage] = useState<ShowMessage>({
@@ -51,7 +53,8 @@ export const RegisterScreen = () => {
       const response = await createUserWithEmailAndPassword(
         auth,
         formRegister.email,
-        formRegister.password
+        formRegister.password,
+        
       )
       //console.log(response)
       setShowMessage({visible:true, message:"Registrado exitosamente",color:"green"});

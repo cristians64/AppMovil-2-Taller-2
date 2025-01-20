@@ -24,11 +24,12 @@ export const styles = StyleSheet.create({
     headerHome:{
         flexDirection:'row',
         alignItems:'center',
-        gap:15
+        marginVertical:10
     },
     IconProfile:{
         flex:1,
-        alignItems:'flex-end' 
+        alignItems:'flex-end',
+        
     }
     ,
     modalProfile:{
@@ -40,7 +41,9 @@ export const styles = StyleSheet.create({
     rootCard:{
         flexDirection:'row',
         padding:20,
-        alignItems:'center'
+        alignItems:'center',
+        backgroundColor:'rgb( 219, 225, 230 )',
+
     },
     fabmessage:{
         position:'absolute',

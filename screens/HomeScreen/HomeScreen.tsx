@@ -4,24 +4,34 @@ import { View, FlatList, StyleSheet } from 'react-native';
 import { styles } from '../../theme/styles';
 
 import { auth, dbRealTime } from '../../config/firebaseConfig';
-import firebase, { updateProfile } from '@firebase/auth'
+import firebase, { signOut, updateProfile } from '@firebase/auth'
 import { MessageCardComponent } from './components/MessageCardComponent';
 import { NewMessageComponent } from './components/NewMessageComponent';
-import { DataSnapshot, onValue, ref } from 'firebase/database';
+import { onValue, ref } from 'firebase/database';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 
 interface FormUser {
   name: string;
 }
 
 export interface Message {
-  id:string;
-  nombre:string;
-  raza:string;
-  edad:string;
+  id: string;
+  to: string;
+  subject: string;
+  message: string;
+  especie: string;
+    raza: string;
+    edad: string;
+    dueño: string;
+    contacto: string;
+    historial: string;
 
 }
 
 const HomeScreen = () => {
+
+  //navegacion
+  const navigation=useNavigation();
 
   //permitir capturar data del usuario
   const [userAuth, setUserAuth] = useState<firebase.User | null>(null)
@@ -58,19 +68,19 @@ const HomeScreen = () => {
     setModalProfile(false);
   }
 
-  const getAllMessages = () =>{
+  const getAllMessages = () => {
 
-    const dbRef = ref (dbRealTime, 'messsages');
+    const dbRef = ref(dbRealTime, 'messages');
 
-    onValue(dbRef,(DataSnapshot)=>{
-      const data = DataSnapshot.val()||{};
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
 
       const getKeys = Object.keys(data);
 
-      const listMessage:Message[]=[];
+      const listMessage: Message[] = [];
 
-      getKeys.forEach((key)=>{
-        const value={...data[key],id:key}
+      getKeys.forEach((key) => {
+        const value = { ...data[key], id: key }
 
         listMessage.push(value);
       })
@@ -78,6 +88,20 @@ const HomeScreen = () => {
       setMessages(listMessage);
 
     })
+
+  }
+
+
+  //funcion cerrar
+  const handleSignOut = async () =>{
+    await signOut(auth);
+
+    navigation.dispatch(CommonActions.reset({
+      index:0,
+      routes:[{name:'InicioScreen'}]
+    }))
+
+    setModalProfile(false);
 
   }
 
@@ -100,9 +124,12 @@ const HomeScreen = () => {
           </View>
         </View>
         <View>
+          <Text style={{textAlign:"center", fontSize:30}}>Mascotas</Text>
+        </View>
+        <View>
           <FlatList
             data={messages}
-            renderItem={({ item }) => <MessageCardComponent message={item} /> }
+            renderItem={({ item }) => <MessageCardComponent message={item} />}
             keyExtractor={item => item.id}
           />
         </View>
@@ -116,10 +143,16 @@ const HomeScreen = () => {
           <View style={styles.headerHome}>
             <Text variant='headlineMedium'>Mi perfil</Text>
             <View style={styles.IconProfile}>
+              
               <IconButton
                 icon="close-circle-outline"
                 size={40}
                 onPress={() => setModalProfile(false)}
+              />
+              <IconButton
+                icon="logout"
+                size={40}
+                onPress={handleSignOut}
               />
             </View>
           </View>
@@ -130,6 +163,7 @@ const HomeScreen = () => {
             value={formUser.name}
             onChangeText={(value) => handleSetvalues('name', value)}
           />
+          
           <TextInput
             mode='outlined'
             label='Correo'
@@ -137,16 +171,17 @@ const HomeScreen = () => {
             disabled
           />
           <Button mode='contained' onPress={handleUpdateUser} >Actualizar</Button>
+          
         </Modal>
       </Portal>
 
-          <FAB
+      <FAB
         icon="plus"
         style={styles.fabmessage}
         onPress={() => setModalMessage(true)}
-        />
+      />
 
-        <NewMessageComponent modalMessage={modalMessage} setModalMessage={setModalMessage}/>
+      <NewMessageComponent modalMessage={modalMessage} setModalMessage={setModalMessage} />
     </>
   );
 

@@ -9,6 +9,7 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 interface FormLogin{
     email:string;
     password:string;
+    
 }
 
 
@@ -22,7 +23,8 @@ export const InicioScreen = () => {
   
     const [formLogin, setFormLogin] = useState<FormLogin>({
         email:"",
-        password:""
+        password:"",
+        
     })
 
     const [showMessage, setShowMessage] = useState<ShowMessage>({
@@ -53,6 +55,7 @@ export const InicioScreen = () => {
                 formLogin.password
             );
             //console.log(response);
+            navigation.dispatch(CommonActions.navigate({name:'HomeScreen'}))
         }
         catch(ex){
             console.log(ex)
@@ -84,7 +87,8 @@ export const InicioScreen = () => {
             style={styles.inputs}
             
         />
-        <Button icon="camera" mode="contained" onPress={handleLogin}>
+        
+        <Button icon="login" mode="contained" onPress={handleLogin}>
             Inicia Sesion
         </Button>
         <Snackbar

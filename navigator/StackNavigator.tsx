@@ -9,24 +9,21 @@ import { View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import React from 'react';
 import { styles } from '../theme/styles';
+import { DetailsScreen } from '../screens/HomeScreen/DetailsScreen';
 
 
 interface Routes{
   name: string;
   screen: () => JSX.Element;
+  headerShown?:boolean;
 }
 
 //no autenticados
-const routesNoAuth: Routes[] =[
+const routes: Routes[] =[
   {name:"InicioScreen",screen:InicioScreen},
-  {name:"RegisterScreen",screen:RegisterScreen}
-]
-
-//autenticados
-
-const routesAuth: Routes[]=[
-  {name:"HomeScreen",screen:HomeScreen}
-  
+  {name:"RegisterScreen",screen:RegisterScreen},
+  {name:"HomeScreen",screen:HomeScreen,headerShown:false},
+  {name:"DetailsScreen",screen:DetailsScreen,headerShown:true}
 ]
 
 
@@ -67,16 +64,11 @@ export const StackNavigator = ()=> {
         <ActivityIndicator animating={true} />
       </View>
       ):(
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName={isAuth?'HomeScreen':'InicioScreen'}>
         {
-          !isAuth
-          ?
-          routesNoAuth.map((item, index)=>(
-          <Stack.Screen key={index} name={item.name} options={{headerShown:false}} component={item.screen} />
-          ))
-          :
-          routesAuth.map((item, index)=>(
-            <Stack.Screen key={index} name={item.name} options={{headerShown:false}} component={item.screen} />
+          
+          routes.map((item, index)=>(
+            <Stack.Screen key={index} name={item.name} options={{headerShown:item.headerShown ?? false}} component={item.screen} />
             ))
         }
         
